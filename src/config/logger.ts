@@ -1,9 +1,13 @@
 import { Tracer } from "tracer";
 
-export type OptionalConfig = Tracer.LoggerConfig | undefined;
+export const normalConsoleSetting = undefined;
 
-export const normalConsoleSetting: OptionalConfig = undefined;
+export const colorConsoleSetting: Tracer.LoggerConfig = {
+  format: "{{timestamp}}: [{{title}}] {{message}}",
+  dateformat: "HH:MM:ss.L"
+};
 
-export const colorConsoleSetting: OptionalConfig = undefined;
-
-export const fileSetting: OptionalConfig = undefined;
+export const fileSetting: Tracer.DailyFileConfig = {
+  root: "/tmp",
+  maxLogFiles: 5
+};

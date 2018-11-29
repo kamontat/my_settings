@@ -1,27 +1,28 @@
 import { console, dailyfile, colorConsole, Tracer } from "tracer";
 import { normalConsoleSetting, fileSetting, colorConsoleSetting } from "../config/logger";
+import { Arguments } from "yargs";
 
 export type LoggerType = "normal" | "color" | "file";
-export type LoggingType = "log" | "trace" | "fatal" | "debug" | "info" | "warn" | "error";
+export type LoggingType = "log" | "debug" | "info" | "warn" | "error";
 
 export interface Logging {
   log(...args: any[]): void;
-  trace(...args: any[]): void;
+  // trace(...args: any[]): void;
   debug(...args: any[]): void;
   info(...args: any[]): void;
   warn(...args: any[]): void;
   error(...args: any[]): void;
-  fatal(...args: any[]): void;
+  // fatal(...args: any[]): void;
 }
 
 export class NullLogger implements Logging {
   log(..._: any[]): void {}
-  trace(..._: any[]): void {}
+  // trace(..._: any[]): void {}
   debug(..._: any[]): void {}
   info(..._: any[]): void {}
   warn(..._: any[]): void {}
   error(..._: any[]): void {}
-  fatal(..._: any[]): void {}
+  // fatal(..._: any[]): void {}
 }
 
 export class Logger implements Logging {
@@ -35,7 +36,7 @@ export class Logger implements Logging {
     this._set(option);
   }
 
-  _set(option?: {
+  private _set(option?: {
     console?: { normal?: Tracer.LoggerConfig; color?: Tracer.LoggerConfig };
     file?: Tracer.DailyFileConfig;
   }) {
@@ -50,6 +51,12 @@ export class Logger implements Logging {
     return this;
   }
 
+  setup(argv: Arguments) {
+    colorConsoleSetting.level = argv.verbose ? "log" : "info";
+
+    this.logs.color = colorConsole(colorConsoleSetting);
+  }
+
   only(type: LoggerType) {
     return this.logs[type] || new NullLogger();
   }
@@ -60,16 +67,8 @@ export class Logger implements Logging {
     this.only("file")[type](...args);
   }
 
-  fatal(...args: any[]) {
-    this._all("fatal", ...args);
-  }
-
   log(...args: any[]) {
     this._all("log", ...args);
-  }
-
-  trace(...args: any[]) {
-    this._all("trace", ...args);
   }
 
   debug(...args: any[]) {

@@ -1,20 +1,9 @@
-import { log } from "./src/model/logger";
+import { log, Logger } from "./src/model/logger";
 import yargs, { Argv, Arguments } from "yargs";
 import { CommandSetting } from "./src/command/_type";
 import * as CommandIndex from "./src/command";
-import HelpIndex from "./src/help";
-import OptionIndex from "./src/option";
 
 export type CommandFn = (yargs: Argv, log: Logger) => Argv;
-
-log._set({
-  console: {
-    color: {
-      format: "{{timestamp}} <{{title}}> {{message}} (in {{file}}:{{line}})",
-      dateformat: "HH:MM:ss.L"
-    }
-  }
-});
 
 // Command setting
 
@@ -22,15 +11,15 @@ yargs
   .help("h")
   .alias("h", "help")
   .showHelpOnFail(true, "Invalid command or option")
-  .usage(HelpIndex.usage)
-  .example(HelpIndex.example.command, HelpIndex.example.desc || HelpIndex.example.description || "")
-  .epilog(HelpIndex.epilog);
-
-if (HelpIndex.strict) yargs.strict();
+  .usage("Usage: $0 <argument> [options...]")
+  .epilog("Copyright 2018©")
+  .strict();
 
 // Global setting
 
-yargs.option(OptionIndex);
+yargs.option({
+  verbose: { alias: "V" }
+});
 
 // Subcommand setting
 
