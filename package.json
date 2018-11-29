@@ -47,7 +47,10 @@
     "start": "node .caches/my-settings.js",
     "clean": "rimraf bin .caches *.log log",
     "clean:all": "rimraf bin .caches *.log log node_modules yarn.lock",
-    "build": "yarn compile:prod && pkg --out-path bin .",
+    "prebuild": "yarn compile:prod",
+    "build": "pkg --out-path bin .",
+    "prenexe-build": "yarn compile:prod",
+    "nexe-build": "nexe --input .caches/my-settings.js --resource \"./package.json\" --output bin/my-settings --verbose --temp .",
     "test": "jest",
     "test:coverage": "jest --coverage"
   },
