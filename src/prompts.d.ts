@@ -50,7 +50,7 @@ declare module "prompts" {
 
     interface Choice {
       title: string;
-      value: string;
+      value: any;
       disable?: boolean;
     }
 
@@ -60,10 +60,10 @@ declare module "prompts" {
     }
 
     interface PromptObject<T extends string = string> {
-      type: ValueOrFunc<PromptType> | Falsy;
+      type: ValueOrFunc<PromptType, PromptType | Falsy> | Falsy;
       name: ValueOrFunc<T>;
-      message?: ValueOrFunc<string>;
-      initial?: string | number | boolean;
+      message?: ValueOrFunc<T, string>;
+      initial?: ValueOrFunc<T, string | number | boolean>;
       style?: string;
       format?: PrevCaller<T, void>;
       validate?: PrevCaller<T, void>;
@@ -91,6 +91,8 @@ declare module "prompts" {
       prompt: PromptObject
     ) => R;
 
+    type Caller<T> = (value: T) => string;
+
     type Falsy = false | null | undefined;
 
     type PromptType =
@@ -105,6 +107,8 @@ declare module "prompts" {
       | "multiselect"
       | "autocomplete";
 
-    type ValueOrFunc<T extends string> = T | PrevCaller<T>;
+    type ValueOrFunc<T extends string, R = T> = R | PrevCaller<T, R>;
+
+    type ValueOrCaller<T> = T | Caller<T>;
   }
 }

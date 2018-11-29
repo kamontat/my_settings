@@ -2,15 +2,19 @@ import execa = require("execa");
 import { Logger } from "../model/logger";
 
 export const Read = async (log: Logger, ...args: any) => {
-  return await Exec(log, "default", "read", ...args);
+  return await Exec(log, "defaults", "read", ...args);
 };
 
 export const Write = async (log: Logger, ...args: any) => {
-  return await Exec(log, "default", "write", ...args);
+  return await Exec(log, "defaults", "write", ...args);
 };
 
 export const Delete = async (log: Logger, ...args: any) => {
-  return await Exec(log, "default", "delete", ...args);
+  try {
+    return await Exec(log, "defaults", "delete", ...args);
+  } catch (e) {
+    return e as execa.ExecaReturns;
+  }
 };
 
 export const Reset = async (log: Logger, args: string) => {
@@ -18,8 +22,6 @@ export const Reset = async (log: Logger, args: string) => {
 };
 
 export const Exec = async (log: Logger, command: string, ...args: any[]) => {
-  console.log("Hello world");
-
   log.debug(`Execute: ${command} ${args.join(" ")}`);
   return await execa(command, args);
 };
