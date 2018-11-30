@@ -1,6 +1,6 @@
 {
   "name": "my-settings",
-  "version": "0.0.1-alpha.1",
+  "version": "0.0.1-alpha.2",
   "description": "My personal computer setting script",
   "main": ".caches/my-settings.js",
   "bin": ".caches/my-settings.js",
@@ -55,30 +55,16 @@
     "test:coverage": "jest --coverage"
   },
   "pkg": {
-    "assets": [
-      "package.json"
-    ]
+    "assets": ["package.json"]
   },
   "jest": {
     "setupTestFrameworkScriptFile": "./test/jest.setup.js",
     "preset": "ts-jest",
     "testEnvironment": "node",
-    "testMatch": [
-      "**/src/**/__tests__/**/*.ts?(x)",
-      "**/src/**/?(*.)+(spec|test).ts?(x)"
-    ],
-    "collectCoverageFrom": [
-      "src/**/*.ts"
-    ],
-    "coverageReporters": [
-      "json",
-      "lcov",
-      "text-summary"
-    ],
-    "moduleFileExtensions": [
-      "js",
-      "ts"
-    ],
+    "testMatch": ["**/src/**/__tests__/**/*.ts?(x)", "**/src/**/?(*.)+(spec|test).ts?(x)"],
+    "collectCoverageFrom": ["src/**/*.ts"],
+    "coverageReporters": ["json", "lcov", "text-summary"],
+    "moduleFileExtensions": ["js", "ts"],
     "transform": {
       "^.+\\.js$": "babel-jest"
     },
