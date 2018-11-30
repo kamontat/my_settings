@@ -1,5 +1,9 @@
 import { console, dailyfile, colorConsole, Tracer } from "tracer";
-import { normalConsoleSetting, fileSetting, colorConsoleSetting } from "../config/logger";
+import {
+  normalConsoleSetting,
+  fileSetting,
+  colorConsoleSetting
+} from "../config/logger";
 import { Arguments } from "yargs";
 
 export type LoggerType = "normal" | "color" | "file";
@@ -25,8 +29,12 @@ export class NullLogger implements Logging {
   // fatal(..._: any[]): void {}
 }
 
+export type LoggerLevelType = "info" | "log" | "debug";
+
 export class Logger implements Logging {
   private logs: { [key in LoggerType]?: Tracer.Logger };
+
+  private _level: LoggerLevelType;
 
   constructor(option?: {
     console?: { normal?: Tracer.LoggerConfig; color?: Tracer.LoggerConfig };
@@ -34,14 +42,18 @@ export class Logger implements Logging {
   }) {
     this.logs = {};
     this._set(option);
+    this._level = "info";
   }
 
   private _set(option?: {
     console?: { normal?: Tracer.LoggerConfig; color?: Tracer.LoggerConfig };
     file?: Tracer.DailyFileConfig;
   }) {
-    const normal = (option && option.console && option.console.normal) || normalConsoleSetting;
-    const color = (option && option.console && option.console.color) || colorConsoleSetting;
+    const normal =
+      (option && option.console && option.console.normal) ||
+      normalConsoleSetting;
+    const color =
+      (option && option.console && option.console.color) || colorConsoleSetting;
     const file = (option && option.file) || fileSetting;
 
     if (normal) this.logs.normal = console(normal);
@@ -52,9 +64,14 @@ export class Logger implements Logging {
   }
 
   setup(argv: Arguments) {
-    colorConsoleSetting.level = argv.verbose ? "log" : "info";
+    this._level = argv.verbose ? "log" : "info";
+    colorConsoleSetting.level = this.level();
 
     this.logs.color = colorConsole(colorConsoleSetting);
+  }
+
+  level() {
+    return this._level;
   }
 
   only(type: LoggerType) {

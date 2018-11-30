@@ -3,7 +3,7 @@ import { Logger } from "../model/logger";
 
 import Chalk from "chalk";
 
-type Action = (v: any) => void;
+type Action = (v: any, raw?: any) => void | Promise<any>;
 
 type Json<T> = {
   [key: string]: T;
@@ -15,13 +15,21 @@ export interface Question extends PromptObject {
 }
 
 export const Ask = (log: Logger, _questions: Question[]) => {
+  log.log(`Initial ask with ${_questions.length} questions`);
+
   const actions: Json<Action> = {};
   const question = _questions.map(v => {
     actions[v.name.toString()] = v.action;
     const help = v.help;
     let called = false;
     v.onRender = function() {
-      if (!called) console.log(Chalk`{redBright.bold Help}: {grey ${help}}`);
+      if (help && help !== "")
+        if (!called) {
+          // new 2 space before start question
+          console.log();
+          console.log();
+          console.log(Chalk`{redBright.bold Help}: {grey ${help}}`);
+        }
       called = true;
     };
 
@@ -38,12 +46,21 @@ export const Ask = (log: Logger, _questions: Question[]) => {
       );
     },
     onSubmit: async (prompts, _answer) => {
-      const name = prompts.name.toString();
-      const answer = typeof _answer === "object" ? _answer[name] : _answer;
-      log.log(`User submit ${answer} to ${name}`);
+      console.log(); // for formating
+      console.log(); // for formating
 
-      await actions[name](answer);
-      return false;
+      const name = prompts.name.toString();
+      const answer =
+        typeof _answer === "object" && !Array.isArray(_answer)
+          ? _answer[name]
+          : _answer;
+      log.log(`User submit "${answer}" to ${name}`);
+
+      const result = await actions[name](answer, _answer);
+      if (result === true || result === "true") {
+        log.debug("Skip all set of questions");
+        return true;
+      } else return false;
     }
   });
 };

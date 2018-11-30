@@ -1,15 +1,15 @@
 import { Logger } from "../model/logger";
 import { CommandSetting } from "./_type";
 import { Arguments } from "yargs";
-import { SetupNewMac } from "../api/setup-new";
+import { SetupNewMac } from "../api/setup-mac";
 
 export default {
-  name: "setup",
+  name: ["setup", "$0"],
   subcommand: {
     require: {
       kind: {
         desc: "What kind of setup do you want?",
-        choices: ["new-mac", "old-mac"]
+        choices: ["mac"]
       }
     }
   },
@@ -27,12 +27,9 @@ export default {
 
     const internet: boolean = argv.internet;
     switch (argv.kind) {
-      case "new-mac":
+      case "mac":
         log.debug(`Setup new mac ${internet ? "with" : "without"} internet`);
         SetupNewMac(log, internet);
-        break;
-      case "old-mac":
-        log.debug(`Setup new mac ${internet ? "with" : "without"} internet`);
         break;
       default:
         log.debug(`Setup with unknown setting`);
@@ -40,8 +37,8 @@ export default {
   },
   help: {
     example: {
-      command: "$0 setup new-mac",
-      desc: "Run setup command for new mac with internet"
+      command: "$0 setup mac",
+      desc: "Run setup command for mac with internet"
     }
   }
 } as CommandSetting;

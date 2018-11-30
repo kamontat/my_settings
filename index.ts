@@ -41,7 +41,9 @@ Object.keys(commands).forEach(value => {
           return p + `[${c}] `;
         }, "");
 
-      return `${command.name} ${result.trim()}`;
+      if (typeof command.name === "string")
+        return `${command.name} ${result.trim()}`;
+      else return command.name.map(name => `${name} ${result.trim()}`);
     })(),
     describe: command.desc || command.description,
     builder: (argv: Argv) => {
