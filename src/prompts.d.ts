@@ -52,6 +52,7 @@ declare module "prompts" {
       title: string;
       value: any;
       disable?: boolean;
+      selected?: boolean;
     }
 
     interface Options {

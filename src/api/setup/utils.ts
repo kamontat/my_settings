@@ -1,6 +1,6 @@
 import chalk from "chalk";
 
-import { Delete, Write, Reset } from "../commandline";
+import { Delete, Write, Reset, DefaultHelper } from "../commandline";
 import { Logger } from "../../model/logger";
 import { Question } from "../ask";
 import { PromptType } from "prompts";
@@ -25,16 +25,13 @@ export const SetOrDefault = async <T = number | string | boolean | undefined>(
   opts: SetOption<T>
 ) => {
   if (opts.value === undefined || (opts.default && opts.default(opts.value))) {
-    return await Delete(log, opts.domain, opts.name);
+    return await DefaultHelper(log, opts.domain, opts.name, {
+      action: "delete"
+    });
   } else {
-    const value = opts.value;
-    let key = "";
-    if (typeof value == "number") {
-      if (value % 1 === 0) key = "-int";
-      else key = "-float";
-    } else if (typeof value == "boolean") key = "-bool";
-    else if (typeof value == "string") key = "-string";
-    return await Write(log, opts.domain, opts.name, key, opts.value);
+    return await DefaultHelper(log, opts.domain, opts.name, {
+      result: opts.value
+    });
   }
 };
 

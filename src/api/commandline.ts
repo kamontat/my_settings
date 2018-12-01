@@ -3,6 +3,44 @@ import { Logger, LoggerLevelType } from "../model/logger";
 import { Writable } from "stream";
 import { cursorTo, clearLine, moveCursor } from "readline";
 
+export interface DefaultHelperSetting {
+  result?: any;
+  action?: "read" | "write" | "delete";
+  global?: boolean;
+}
+
+export const DefaultHelper = async (
+  log: Logger,
+  domain: string,
+  name: string,
+  setting?: DefaultHelperSetting
+) => {
+  const g = setting && setting.global ? setting.global : false;
+  const action = setting && setting.action ? setting.action : "write";
+  const result = setting && setting.result ? setting.result : undefined;
+
+  let key = "";
+  if (typeof result == "number") {
+    if (result % 1 === 0) key = "-int";
+    else key = "-float";
+  } else if (typeof result == "boolean") key = "-bool";
+  else if (typeof result == "string") key = "-string";
+
+  switch (action) {
+    case "read":
+      if (g) return await ReadGlobal(log, domain, name, key, result);
+      else return await Read(log, domain, name, key, result);
+
+    case "delete":
+      return await Delete(log, domain, name, key);
+
+    case "write":
+    default:
+      if (g) return await WriteGlobal(log, domain, name, key, result);
+      else return await Write(log, domain, name, key, result);
+  }
+};
+
 export const ReadGlobal = async (log: Logger, ...args: any) => {
   return await Read(log, "-g", ...args);
 };

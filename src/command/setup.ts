@@ -28,6 +28,12 @@ export default {
         "Instead of exit only current group of question, exit the whole command",
       type: "boolean",
       default: false
+    },
+    "confirm-exit": {
+      alias: "e",
+      desc: "Add comfirmation how 'ctrl+c' should be",
+      type: "boolean",
+      default: true
     }
   },
   action: (log: Logger, argv: Arguments) => {
@@ -35,7 +41,10 @@ export default {
 
     const internet: boolean = argv.internet;
     const exit: boolean = (argv.exit === undefined && false) || argv.exit;
+    const ask: boolean = (argv.e === undefined && true) || argv.e;
+
     log.debug(`Start command with ${exit ? "exitable" : "not-exitable"}`);
+    Asker.CONST.setAsk(ask);
     Asker.CONST.setExit(exit);
 
     switch (argv.kind) {

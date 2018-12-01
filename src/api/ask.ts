@@ -2,6 +2,7 @@ import prompts, { PromptObject } from "prompts";
 import { Logger } from "../model/logger";
 
 import Chalk from "chalk";
+import chalk from "chalk";
 
 type Action = (v: any, raw?: any) => void | Promise<any>;
 
@@ -16,13 +17,20 @@ export interface Question extends PromptObject {
 
 export class Asker {
   private exit: boolean;
+  private ask: boolean;
 
   private constructor() {
     this.exit = false;
+    this.ask = true;
   }
 
   setExit(exit: boolean) {
     this.exit = exit;
+    if (this.exit) this.ask = false;
+  }
+
+  setAsk(ask: boolean) {
+    this.ask = ask;
   }
 
   Ask(log: Logger, _questions: Question[]) {
@@ -50,15 +58,28 @@ export class Asker {
     });
 
     return prompts(question, {
-      onCancel: async (prompts, _answer) => {
-        const name = prompts.name.toString();
+      onCancel: async (prompt, _answer) => {
+        const name = prompt.name.toString();
         log.log(
           `User cancel on ${name} prompt with input is ${JSON.stringify(
             _answer
           )}`
         );
 
-        if (this.exit) process.exit(2);
+        if (this.ask) {
+          console.log();
+          console.log();
+          return await prompts({
+            type: "toggle",
+            name: "exit",
+            message: `${chalk.inverse.underline.bold(
+              "Do you want to exit every question set?"
+            )}`,
+            initial: this.exit,
+            active: "Yes",
+            inactive: "No"
+          }).then(result => result.exit && process.exit(2));
+        } else if (this.exit) process.exit(3);
       },
       onSubmit: async (prompts, _answer) => {
         console.log(); // for formating
