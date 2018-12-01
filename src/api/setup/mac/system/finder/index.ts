@@ -10,6 +10,7 @@ import {
   SetOrDefault,
   Reset
 } from "../../../utils";
+import { WriteGlobal } from "../../../../commandline";
 
 export const Finder = (log: Logger, _: {}) => {
   PrintStartCommand(log, "Mac", "Finder");
@@ -103,6 +104,19 @@ export const Finder = (log: Logger, _: {}) => {
           value: result,
           default: v => v === undefined
         });
+      }
+    },
+    {
+      help: "Show all file extensions in Finder",
+      type: "toggle" as PromptType,
+      name: "show_ext",
+      message: "Show file extension",
+      initial: false,
+      active: "Yes",
+      inactive: "No",
+      action: async (result: boolean) => {
+        // defaults write -g AppleShowAllExtensions -bool true
+        return WriteGlobal(log, "AppleShowAllExtensions", "-bool", result);
       }
     },
     {
