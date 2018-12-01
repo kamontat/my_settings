@@ -58,6 +58,12 @@ export const PrintStartCommand = (
   );
 };
 
+export const Instruction = (log: Logger, msg: string) => {
+  log.info(
+    chalk`{bgWhiteBright {red.bold.dim Instruction}: {green.dim ${msg}}}`
+  );
+};
+
 export interface PreAskQuestionType {
   name: string;
   default?: boolean;

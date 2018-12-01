@@ -5,8 +5,6 @@ import * as CommandIndex from "./src/command";
 
 export type CommandFn = (yargs: Argv, log: Logger) => Argv;
 
-// Command setting
-
 yargs
   .help("h")
   .alias("h", "help")

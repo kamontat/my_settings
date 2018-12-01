@@ -1,11 +1,18 @@
 import execa = require("execa");
 import { Logger, LoggerLevelType } from "../model/logger";
-import { Writable, Stream } from "stream";
-import { EventEmitter } from "events";
+import { Writable } from "stream";
 import { cursorTo, clearLine, moveCursor } from "readline";
+
+export const ReadGlobal = async (log: Logger, ...args: any) => {
+  return await Read(log, "-g", ...args);
+};
 
 export const Read = async (log: Logger, ...args: any) => {
   return await Exec(log, "defaults", "read", ...args);
+};
+
+export const WriteGlobal = async (log: Logger, ...args: any) => {
+  return await Write(log, "-g", ...args);
 };
 
 export const Write = async (log: Logger, ...args: any) => {

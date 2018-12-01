@@ -14,53 +14,73 @@ export interface Question extends PromptObject {
   action: Action;
 }
 
-export const Ask = (log: Logger, _questions: Question[]) => {
-  log.log(`Initial ask with ${_questions.length} questions`);
+export class Asker {
+  private exit: boolean;
 
-  const actions: Json<Action> = {};
-  const question = _questions.map(v => {
-    actions[v.name.toString()] = v.action;
-    const help = v.help;
-    let called = false;
-    v.onRender = function() {
-      if (help && help !== "")
-        if (!called) {
-          // new 2 space before start question
-          console.log();
-          console.log();
-          console.log(Chalk`{redBright.bold Help}: {grey ${help}}`);
-        }
-      called = true;
-    };
+  private constructor() {
+    this.exit = false;
+  }
 
-    delete v.action;
-    delete v.help;
-    return v as PromptObject;
-  });
+  setExit(exit: boolean) {
+    this.exit = exit;
+  }
 
-  return prompts(question, {
-    onCancel: async (prompts, _answer) => {
-      const name = prompts.name.toString();
-      log.log(
-        `User cancel on ${name} prompt with input is ${JSON.stringify(_answer)}`
-      );
-    },
-    onSubmit: async (prompts, _answer) => {
-      console.log(); // for formating
-      console.log(); // for formating
+  Ask(log: Logger, _questions: Question[]) {
+    log.log(`Initial ask with ${_questions.length} questions`);
 
-      const name = prompts.name.toString();
-      const answer =
-        typeof _answer === "object" && !Array.isArray(_answer)
-          ? _answer[name]
-          : _answer;
-      log.log(`User submit "${answer}" to ${name}`);
+    const actions: Json<Action> = {};
+    const question = _questions.map(v => {
+      actions[v.name.toString()] = v.action;
+      const help = v.help;
+      let called = false;
+      v.onRender = function() {
+        if (help && help !== "")
+          if (!called) {
+            // new 2 space before start question
+            console.log();
+            console.log();
+            console.log(Chalk`{redBright.bold Help}: {grey ${help}}`);
+          }
+        called = true;
+      };
 
-      const result = await actions[name](answer, _answer);
-      if (result === true || result === "true") {
-        log.debug("Skip all set of questions");
-        return true;
-      } else return false;
-    }
-  });
-};
+      delete v.action;
+      delete v.help;
+      return v as PromptObject;
+    });
+
+    return prompts(question, {
+      onCancel: async (prompts, _answer) => {
+        const name = prompts.name.toString();
+        log.log(
+          `User cancel on ${name} prompt with input is ${JSON.stringify(
+            _answer
+          )}`
+        );
+
+        if (this.exit) process.exit(2);
+      },
+      onSubmit: async (prompts, _answer) => {
+        console.log(); // for formating
+        console.log(); // for formating
+
+        const name = prompts.name.toString();
+        const answer =
+          typeof _answer === "object" && !Array.isArray(_answer)
+            ? _answer[name]
+            : _answer;
+        log.log(`User submit "${answer}" to ${name}`);
+
+        const result = await actions[name](answer, _answer);
+        if (result === true || result === "true") {
+          log.debug("Skip all set of questions");
+          return true;
+        } else return false;
+      }
+    });
+  }
+
+  public static CONST = new Asker();
+}
+
+export const Ask = (l: Logger, _q: Question[]) => Asker.CONST.Ask(l, _q);

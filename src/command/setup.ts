@@ -2,6 +2,7 @@ import { Logger } from "../model/logger";
 import { CommandSetting } from "./_type";
 import { Arguments } from "yargs";
 import { SetupNewMac } from "../api/setup-mac";
+import { Asker } from "../api/ask";
 
 export default {
   name: ["setup", "$0"],
@@ -20,16 +21,27 @@ export default {
       desc: "Setup with internet access",
       type: "boolean",
       default: true
+    },
+    exit: {
+      alias: "E",
+      desc:
+        "Instead of exit only current group of question, exit the whole command",
+      type: "boolean",
+      default: false
     }
   },
   action: (log: Logger, argv: Arguments) => {
     log.setup(argv);
 
     const internet: boolean = argv.internet;
+    const exit: boolean = (argv.exit === undefined && false) || argv.exit;
+    log.debug(`Start command with ${exit ? "exitable" : "not-exitable"}`);
+    Asker.CONST.setExit(exit);
+
     switch (argv.kind) {
       case "mac":
         log.debug(`Setup new mac ${internet ? "with" : "without"} internet`);
-        SetupNewMac(log, internet);
+        SetupNewMac(log, { internet: internet });
         break;
       default:
         log.debug(`Setup with unknown setting`);
