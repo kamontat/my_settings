@@ -10,6 +10,7 @@
   "private": false,
   "dependencies": {
     "chalk": "2.4.1",
+    "enquirer": "^2.1.1",
     "execa": "1.0.0",
     "prompts": "1.2.1",
     "tracer": "0.9.6",
@@ -55,16 +56,30 @@
     "test:coverage": "jest --coverage"
   },
   "pkg": {
-    "assets": ["package.json"]
+    "assets": [
+      "package.json"
+    ]
   },
   "jest": {
     "setupTestFrameworkScriptFile": "./test/jest.setup.js",
     "preset": "ts-jest",
     "testEnvironment": "node",
-    "testMatch": ["**/src/**/__tests__/**/*.ts?(x)", "**/src/**/?(*.)+(spec|test).ts?(x)"],
-    "collectCoverageFrom": ["src/**/*.ts"],
-    "coverageReporters": ["json", "lcov", "text-summary"],
-    "moduleFileExtensions": ["js", "ts"],
+    "testMatch": [
+      "**/src/**/__tests__/**/*.ts?(x)",
+      "**/src/**/?(*.)+(spec|test).ts?(x)"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.ts"
+    ],
+    "coverageReporters": [
+      "json",
+      "lcov",
+      "text-summary"
+    ],
+    "moduleFileExtensions": [
+      "js",
+      "ts"
+    ],
     "transform": {
       "^.+\\.js$": "babel-jest"
     },

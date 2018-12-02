@@ -12,12 +12,12 @@ export interface DefaultHelperSetting {
 export const DefaultHelper = async (
   log: Logger,
   domain: string,
-  name: string,
+  name?: string,
   setting?: DefaultHelperSetting
 ) => {
   const g = setting && setting.global ? setting.global : false;
   const action = setting && setting.action ? setting.action : "write";
-  const result = setting && setting.result ? setting.result : undefined;
+  const result = setting && setting.result;
 
   let key = "";
   if (typeof result == "number") {
@@ -26,18 +26,22 @@ export const DefaultHelper = async (
   } else if (typeof result == "boolean") key = "-bool";
   else if (typeof result == "string") key = "-string";
 
+  const args = [domain];
+  if (name) args.push(name);
+  if (key && result !== undefined && key !== "") args.push(key, result);
+
   switch (action) {
     case "read":
-      if (g) return await ReadGlobal(log, domain, name, key, result);
-      else return await Read(log, domain, name, key, result);
+      if (g) return await ReadGlobal(log, ...args);
+      else return await Read(log, ...args);
 
     case "delete":
-      return await Delete(log, domain, name, key);
+      return await Delete(log, ...args);
 
     case "write":
     default:
-      if (g) return await WriteGlobal(log, domain, name, key, result);
-      else return await Write(log, domain, name, key, result);
+      if (g) return await WriteGlobal(log, ...args);
+      else return await Write(log, ...args);
   }
 };
 

@@ -2,7 +2,7 @@ import { PromptType } from "prompts";
 
 import { Logger } from "../../../../../model/logger";
 
-import { Ask } from "../../../../ask";
+import { Ask, Question } from "../../../../ask";
 import {
   yes_no_default,
   YND,
@@ -13,11 +13,8 @@ import {
 import { WriteGlobal } from "../../../../commandline";
 
 export const Finder = (log: Logger, _: {}) => {
-  PrintStartCommand(log, "Mac", "Finder");
-
   const finder = "com.apple.finder";
-
-  return Ask(log, [
+  const _q = [
     {
       help:
         "Reveals hidden files that begin with a period or are flagged specifically as hidden.",
@@ -168,7 +165,10 @@ export const Finder = (log: Logger, _: {}) => {
         });
       }
     }
-  ]).then(() => {
+  ] as Question[];
+
+  PrintStartCommand(log, "Mac", "Finder");
+  return Ask(log, _q).then(() => {
     Reset(log, "Finder");
   });
 };

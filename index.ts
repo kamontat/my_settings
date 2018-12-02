@@ -15,9 +15,17 @@ yargs
 
 // Global setting
 
-yargs.option({
-  verbose: { alias: "V" }
-});
+yargs
+  .option({
+    verbose: { alias: "V", desc: "Show every output level as command output" }
+  })
+  .option({
+    color: {
+      alias: "C",
+      default: true,
+      desc: "Make command colors, The colors will be great on dark theme"
+    }
+  });
 
 // Subcommand setting
 

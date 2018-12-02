@@ -5,6 +5,7 @@ import {
   colorConsoleSetting
 } from "../config/logger";
 import { Arguments } from "yargs";
+import chalk from "chalk";
 
 export type LoggerType = "normal" | "color" | "file";
 export type LoggingType = "log" | "debug" | "info" | "warn" | "error";
@@ -65,6 +66,8 @@ export class Logger implements Logging {
 
   setup(argv: Arguments) {
     this._level = argv.verbose ? "log" : "info";
+    chalk.enabled = argv.color;
+
     colorConsoleSetting.level = this.level();
 
     this.logs.color = colorConsole(colorConsoleSetting);

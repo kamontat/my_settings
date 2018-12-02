@@ -37,7 +37,7 @@ export class Asker {
     log.log(`Initial ask with ${_questions.length} questions`);
 
     const actions: Json<Action> = {};
-    const question = _questions.map(v => {
+    const question = _questions.map((v, i) => {
       actions[v.name.toString()] = v.action;
       const help = v.help;
       let called = false;
@@ -47,7 +47,12 @@ export class Asker {
             // new 2 space before start question
             console.log();
             console.log();
-            console.log(Chalk`{redBright.bold Help}: {grey ${help}}`);
+
+            console.log(
+              Chalk`{dim ${(
+                i + 1
+              ).toString()})} {redBright.bold Help}: {grey ${help}}`
+            );
           }
         called = true;
       };
@@ -79,7 +84,8 @@ export class Asker {
             active: "Yes",
             inactive: "No"
           }).then(result => result.exit && process.exit(2));
-        } else if (this.exit) process.exit(3);
+        } else if (this.exit) return process.exit(3);
+        return undefined;
       },
       onSubmit: async (prompts, _answer) => {
         console.log(); // for formating

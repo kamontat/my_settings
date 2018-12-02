@@ -6,6 +6,7 @@ import { Dock } from "./dock";
 import { Dashboard } from "./dashboard";
 import { Finder } from "./finder";
 import { MacBehavior } from "./behavior";
+import { Safari } from "./safari";
 
 export const MacSystem = (log: Logger, _internet: boolean, _opts: {}) => {
   log.info(chalk.blueBright.bold("Start setup Mac system..."));
@@ -19,5 +20,8 @@ export const MacSystem = (log: Logger, _internet: boolean, _opts: {}) => {
     })
     .then(() => {
       return Finder(log, _opts);
+    })
+    .then(() => {
+      return Safari(log, _opts);
     });
 };

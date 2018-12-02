@@ -1,4 +1,4 @@
-import { Argv, Options, PositionalOptions, Arguments } from "yargs";
+import { Options, PositionalOptions, Arguments } from "yargs";
 import { Logger } from "../model/logger";
 
 export type CommandSetting = {
@@ -19,7 +19,10 @@ export type CommandSetting = {
   option?: { [name: string]: Options };
   demandOption?: string[];
 
-  subcommand?: { require?: { [name: string]: PositionalOptions }; optional?: { [name: string]: PositionalOptions } };
+  subcommand?: {
+    require?: { [name: string]: PositionalOptions };
+    optional?: { [name: string]: PositionalOptions };
+  };
 
   action: (log: Logger, argv: Arguments) => void;
 };
